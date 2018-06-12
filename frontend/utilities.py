@@ -16,7 +16,6 @@ its being used a lot in multiple scripts.
 import cv2, sys, os
 import numpy as np
 import cv2
-import files 
 
 # This holds the strings for the conversion
 # for the conversion codes. Feel free to add 

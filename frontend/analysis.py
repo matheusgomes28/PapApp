@@ -3,7 +3,7 @@
 # Fourier transform.
 import cv2
 import numpy as np
-import filtering as fil
+import frontend.filtering as fil
 
 
 def fourier(image):

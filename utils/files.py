@@ -224,6 +224,20 @@ def append_path(path1, path2):
     # Return the joined paths
     return os.path.join(abs_path1, path2).replace("\\", "/")
 
+def exists(path):
+    """
+    Function to check whether or not
+    a given path exists in disc.
+
+    Params:
+    path - the string representing the path
+
+    Returns:
+    True if path exists, False otherwise.
+    """
+
+    # Use the OS function with the abspath
+    return os.path.lexists(abspath(path))
 
 def copy_image(source, dest):
     """
