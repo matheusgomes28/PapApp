@@ -133,8 +133,44 @@ def main():
     ## FILE FUNCTION LOADING ##
     ###########################
     if args["--file"]:
-        pass
+        
+        # Again, parse path and make sure file exists
+        path = files.abspath(args["--file"])
+        if not files.exists(path):
+            print(Fore.RED + "File does not exist. Exiing.." + Style.RESET_ALL)
 
+        # Create the sample array for handling
+        X = np.arange(256) # [0,255] for the intensities
+
+        # Open the file and eval it
+        with open(path, 'r') as f:
+            expr = f.read().strip()
+
+
+        try:
+            # Get he values from he funciton
+            Y = eval(expr)
+
+            # Normalise the stuff
+            Y = Y / np.sum(Y)
+
+            # Save the file 
+            np.savetxt("model_hist.txt", Y )
+
+        except SyntaxError: # For the error in the code.
+            print("Invalid syntax in the function file. Exiting.")
+            sys.exit()
+        except NameError: # For the variable name errors.
+            print("Undefined name given in function file. Exiting")
+            sys.exit()
+
+        
+        # Plot tthe suff
+        fig = plt.figure(figsize=(5,2))
+        ax1 = plt.gca()
+        ax1.set_title("Hisogram Created")
+        ax1.plot(Y)
+        fig.tight_layout(); plt.show()
 
 # Init method
 if __name__ == "__main__":

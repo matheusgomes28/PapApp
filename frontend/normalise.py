@@ -83,6 +83,12 @@ if __name__ == "__main__":
     # Histogram calculation
     histogram = an.get_histogram(image)
 
+    
+    # Here we actually do the stuff
+    hist_model = np.loadtxt("model_hist.txt")
+    normalised = an.match_histogram(image, hist_model)
+    
+
 
     # Now plot the stuff
     fig = plt.figure(figsize=(10,5))
@@ -99,8 +105,8 @@ if __name__ == "__main__":
 
     ax3 = plt.subplot(1,3,3)
     ax3.set_axis_off()
-    ax3.set_title("Laplacian Image")
-    plt.imshow(lap, cmap="gray")
+    ax3.set_title("Normalised Image")
+    plt.imshow(normalised, cmap="gray")
 
     fig.tight_layout()
     plt.show()
