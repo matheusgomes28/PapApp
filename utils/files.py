@@ -260,6 +260,18 @@ def copy_image(source, dest):
     img = cv2.imread(abs_src)
     cv2.imwrite(abs_dst, img)
 
+def mkdir(path):
+    """
+    This function creates a directory with
+    the path given. If path already exists,
+    does nothing.
+
+    Args:
+        path - The path to create.
+    """
+
+    # Simple use of make dir function
+    os.mkdir(abspath(path))
 
 if __name__ == "__main__":  # testing code here
     print(os.getcwd())
