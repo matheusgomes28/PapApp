@@ -37,6 +37,42 @@ def gaussian_kernel(N, mu, sigma):
     # Finally just return the normalized kernel
     return X*(1/np.sum(X))
 
+def circular_mask(dims, r1, r2):
+    """
+    Creates a circular mask around the centre of
+    the image. It uses Numpy arrays to represent the mask,
+    with floats varying in range [0,1].
+
+    Function used for decay = (R2-D)/(R2-R1)
+
+    Arguments:
+        dims - Tuple representing array object.
+        r1   - The inner radius, all pixels within this radius
+               have value 1.
+        r2   - The outer radius (cutoff), this is the linear cutoff.
+
+    Returns:
+        Numpy array representing the object.
+    """
+
+    # Just making some basic error checks
+    assert r2>r1, isinstance(dims, tuple)
+
+    # Create the matrix for the distance 
+    offsetx, offsety = dims[1]//2, dims[0]//2
+    Xs = np.tile(np.arange(dims[1])-offsetx, (dims[0], 1))
+    Ys = np.tile(np.arange(dims[0])-offsety, (dims[1],1)).T
+    Ds = np.sqrt(Xs*Xs + Ys*Ys)
+    
+    # Apply the linear cutoff
+    linear = (r2-Ds)/(r2-r1)
+    
+    # Get inner mask
+    mask = np.maximum(0, linear)
+    mask[Ds<=r1] = 1
+
+    return mask
+
 def delta(N):
     """
     Generates the delta function given 

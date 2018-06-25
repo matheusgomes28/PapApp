@@ -20,6 +20,7 @@ import os, sys
 sys.path.append(os.path.abspath("../"))
 from utils import files
 from frontend import utilities as ut
+from fronend import utilities.cprint as cprint
 
 # Imports for the CLI stuff
 from docopt import docopt
@@ -31,19 +32,6 @@ import numpy as np
 
 # CLI definition stuff here
 c = {"RED": Fore.RED, "GREEN": Fore.GREEN, "BLUE": Fore.BLUE}
-
-def cprint(text, colour=c["RED"]):
-    """
-    Print in colour to the console.
-    
-    Args:
-        text   - The text to print.
-        colour - The colorama colour to print with.
-    """
-
-    string = colour + text + Style.RESET_ALL
-    print(string)
-
 
 def loading_bar(current, N, size=20):
     """
@@ -91,20 +79,22 @@ def main():
 
     # Get the labels (to create the folder) and total
     labels = features[column].unique()
+    print("Labels are: " + str(labels))
     total_rows = features.shape[0]
     current = 0
 
     # Create each folder to save the images
     for l in labels:
-        
+       
         # Check if folder exists, and create dir
         img_dir = os.path.dirname(fpath) # Images directory path
         lpath = files.append_path(img_dir, str(l)) # Label path
+
         if not files.exists(lpath): files.mkdir(lpath)
 
         # Now use iterrows to save each image
         for i, row in features[features[column]==l].iterrows():
-            
+
             # Get the source and destination path strings for images
             source = files.append_path(img_dir, str(row["name"]))
             dst = files.append_path(lpath, str(row["name"]))
@@ -115,6 +105,7 @@ def main():
             # Print the loading bar
             loading_bar(current, total_rows, 40)
             current += 1
+            
 
     # Finished processing stuff
     cprint("\nFinished!", c["GREEN"])

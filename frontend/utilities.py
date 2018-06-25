@@ -17,6 +17,9 @@ import cv2, sys, os
 import numpy as np
 import cv2
 
+# For the colour printing stuff
+from colorama import Fore
+
 # This holds the strings for the conversion
 # for the conversion codes. Feel free to add 
 # more strings if you need a different space
@@ -87,6 +90,22 @@ def update_line(text, chars=["\033[F","\r"]):
     else:
         sys.stdout.write(text + "\n")
         sys.stdout.write(chars[0])
+
+
+# CLI definition stuff here
+c = {"RED": Fore.RED, "GREEN": Fore.GREEN, "BLUE": Fore.BLUE}
+
+def cprint(text, colour=c["RED"]):
+    """
+    Print in colour to the console.
+    
+    Args:
+        text   - The text to print.
+        colour - The colorama colour to print with.
+    """
+
+    string = colour + text + Style.RESET_ALL
+    print(string)
 
 
 ## Any questions on this code, please just
