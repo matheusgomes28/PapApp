@@ -5,9 +5,10 @@ scripts.
 """
 
 # Get all the relevant imports
-__all__ = ["analysis", "filtering", "utilities"]
+__all__ = ["analysis", "filtering", "utilities", "blob_detector"]
 
 # Back compatibility imports
 # from frontend.filtering import filtering
 # from frontend.analysis import analysis
-# frontend.utilities import utilities
+# from frontend.utilities import utilities
+# from frontent.blob_detector import blob_detector 
