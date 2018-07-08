@@ -21,6 +21,7 @@ from frontend import analysis as an
 from frontend import utilities as ut
 from frontend import filtering as ft
 from frontend.utilities import cprint
+from frontend.blob_detector import BlobDetector
 
 # CLI and argparse stuff
 from docopt import docopt
@@ -85,7 +86,7 @@ def main():
     diff = (eroded - image)
     
     # Apply the circular mask to the fundus
-    mask = ft.circular_mask(diff.shape, 600, 601)
+    mask = ft.circular_mask(diff.shape, 450, 451)
     diff = (diff*mask).astype(np.uint8)
     diff = np.dstack((diff, diff, diff))
 
@@ -110,30 +111,21 @@ def main():
     ##########################
     ## Blob Detection Stuff ##
     ##########################
-
-    # Create the parameters and filtering options
-    params = cv2.SimpleBlobDetector_Params()
-    params.filterByInertia = True
-    params.minInertiaRatio = 0.025
-    params.blobColor = 0
-
-    # Creat the detector with the parameters
-    detector = cv2.SimpleBlobDetector_create(params)
-
-    # Get the keypoints with the detector
-    keypoints = detector.detect(vessel_mask)
-    kpt = keypoints[2]
-
-    print("Point: ", kpt.pt)
-    print("Octave: ", kpt.octave)
-    print("Size: ", kpt.size)
-    print("Angle: ", kpt.angle)
-    print("Overlap: ", kpt.overlap)
+    
+    # Create the detector 
+    detector = BlobDetector()
+    detector.set_colour(0, 10, 1)
+    detector.filter_inertia(True, 0.25, 100)
+    #detector.filter_convexity(True, 0.5, 2)
+    detector.filter_area(True, 10, 1000)
+    
+    # Get the blobs keypoint stuff
+    points, sizes = detector.detect(cv2.erode(vessel_mask,kernel, iterations=1))
 
     # Draw the blobs detected
-    flags = cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS # To match size
-    out_img = np.zeros(vessel_mask.shape).astype(np.uint8) # Empty (but it is required)
-    blob_img = cv2.drawKeypoints(out_img, keypoints, np.array([]), 255, flags)
+    blob_img = diff_shifted.copy()
+    for i in range(len(points)):
+        cv2.circle(blob_img, (points[i][0], points[i][1]), int(sizes[i]/2), 255, 4)
 
     # Display the image (for testing only)
     fig = plt.figure(figsize=(17,5))
@@ -146,7 +138,7 @@ def main():
     ax2 = plt.subplot(1,3,2) 
     ax2.set_axis_off()
     ax2.set_title("Vessel Network Mask")
-    ax2.imshow(vessel_mask, cmap="gray")
+    ax2.imshow(diff_shifted, cmap="gray")
 
     ax3 = plt.subplot(1,3,3)
     ax2.set_axis_off()

@@ -27,7 +27,7 @@ class BlobDetector(object):
 
    
 
-    def __init__(self, colour):
+    def __init__(self):
 
         # Set the filter stuff to default
         self.filterArea = False
@@ -37,7 +37,32 @@ class BlobDetector(object):
         
         # The parameter obj 
         self._params = cv2.SimpleBlobDetector_Params()
+        
+        # Relax all the default param values in OpenCV
+        self._params.filterByArea = False
+        self._params.minArea = 10
+        self._params.maxArea = 2000
+        
+        self._params.filterByInertia = False
+        self._params.minInertiaRatio = 0.1
+        self._params.maxInertiaRatio = 1000
 
+        self._params.filterByCircularity = False
+        self._params.minCircularity = 0
+        self._params.maxCircularity = 1000
+
+        self._params.filterByConvexity = False
+        self._params.minConvexity = 0
+        self._params.maxConvexity = 10
+
+        self._params.filterByColor = False
+        self._params.blobColor = 0
+
+        self._params.thresholdStep = 2
+        self._params.minThreshold = 0
+        self._params.maxThreshold = 10
+        self._params.minRepeatability = 2
+        self._params.minDistBetweenBlobs = 5
 
     def detect(self,img):
         """
@@ -54,12 +79,12 @@ class BlobDetector(object):
         """
 
         # Create the detector (and check which version is installed)
-        cv_ver = (cv2.__versio__).split('.')[0]
+        cv_ver = (cv2.__version__).split('.')[0]
 
         if int(cv_ver) < 3:
-            detector = cv2.SimpleBlobDetector(params)
+            detector = cv2.SimpleBlobDetector(self._params)
         else:
-            detector = cv2.SimpleBlobDetector_create(params)
+            detector = cv2.SimpleBlobDetector_create(self._params)
 
         # Get the keypoints
         keypoints = detector.detect(img)
@@ -69,8 +94,8 @@ class BlobDetector(object):
 
         # Now split the keypoints into coordinates (y,x)
         # and the sizes of the blobs
-        coords = [r_tup(*kpt.pt) for ktp in keypoints]
-        sizes = [r_tup(0, ktp.size)[1] for ktp in keypoints]
+        coords = [r_tup(*kpt.pt) for kpt in keypoints]
+        sizes = [r_tup(0, kpt.size)[1] for kpt in keypoints]
 
         # return the tuple
         return coords, sizes
@@ -80,7 +105,7 @@ class BlobDetector(object):
     ## Parameter Setter Functions ##
     ################################
 
-    def set_colour(self, min_trhesh, max_thresh, step_thresh):
+    def set_colour(self, min_thresh, max_thresh, step_thresh):
         """
         Method to set the parameters for the colour
         settings of the simple blob detector.
